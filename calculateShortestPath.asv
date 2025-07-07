@@ -1,0 +1,53 @@
+clear all;% Example usage:
+k1 = [1.9,0,0];
+k2 = [1.1,0,0];
+shortest_length = calculateShortestPath1(k1, k2, 1, 2);
+straight_length = sqrt(sum((k2-k1).^2));
+disp(['Shortest path length: ', num2str(shortest_length)]);
+disp(['straight_length: ', num2str(straight_length)]);
+function shortest_path_length = calculateShortestPath1(k1, k2,r1,r2)
+    objFun = @(x) pathLength(x, k1, k2);
+    
+    nPoints =8;
+    x0 = linspace(0, 1, nPoints)';
+    initialPath = (1-x0)*k1 + x0*k2;
+    initialGuess = initialPath(:);
+    
+    lb = -Inf(size(initialGuess));
+    ub = Inf(size(initialGuess));
+    nonlcon = @(x) sphereConstraints(x, r1, r2);
+    
+    options = optimoptions('fmincon', 'Algorithm', 'sqp', 'Display', 'iter','MaxFunctionEvaluations', 5000);
+    
+    shortestPath = fmincon(objFun, initialGuess, [], [], [], [], lb, ub, nonlcon, options);
+    
+    shortest_path_length = pathLength(shortestPath, k1, k2);
+end
+function len = pathLength(x, k1, k2)
+    nPoints = length(x)/3;
+    path = reshape(x, 3, nPoints);
+    len = 0;
+    
+    % 计算从 k1 到路径第一个点的距离
+    len = len + norm(path(:,1) - k1);
+    
+    % 计算路径中间点的距离
+    for i = 1:nPoints-1
+        len = len + norm(path(:,i) - path(:,i+1));
+    end
+    
+    % 计算从路径最后一个点到 k2 的距离
+    len = len + norm(k2 - path(:,end));
+end
+function [c, ceq] = sphereConstraints(x, r1, r2)
+    nPoints = length(x)/3;
+    path = reshape(x, 3, nPoints);
+    c = zeros(2*nPoints, 1);
+    for i = 1:nPoints
+        dist = norm(path(:, i));
+        c(2*i-1) = dist^2 - r2^2;
+        c(2*i) = r1^2 - dist^2;
+    end
+    ceq = [];
+end
+ 
