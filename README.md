@@ -18,7 +18,10 @@ Model 2: path-shifted fusion-Molecules fuse with their closest neighbor even if 
 Model 3: path-redirected fusion-Molecules fuse with their closest neighbor based on the true shortest path around the nucleus, allowing nucleus-aware trajectories.
 <img width="861" height="314" alt="Image" src="https://github.com/user-attachments/assets/a2812711-91fe-4ce6-a039-3f557be75668" />
 ## Usage
-For all file, to get the data, run
-``calcuate.m``
+For all model, to get the data, run
+``calculate.m``.  
+Model 2 and Model 3 utilize the same document, differing only in the implementation of the ``findclosestpoint.m``.   
+For model 2, run``closest_distance = sum((targetPoint-points(closest_index,:)).^2)``  
+For model 3, run ``closest_distance = calculateShortestPath(targetPoint, points(closest_index,:), r1, r2);``
 
 
