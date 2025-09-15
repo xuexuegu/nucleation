@@ -23,5 +23,15 @@ For all model, to get the data, run
 Model 2 and Model 3 utilize the same document, differing only in the implementation of the ``findclosestpoint.m``.   
 For model 2, run``closest_distance = sum((targetPoint-points(closest_index,:)).^2)``  
 For model 3, run ``closest_distance = calculateShortestPath(targetPoint, points(closest_index,:), r1, r2);``
+## Update
+The code of model3 has been updated from Old Version (model3) to New Version (model3_update).  
+This release improves simulation logic, geometric constraints, numerical stability, and overall reproducibility.  
+### Key update  
+1.**Distance Metric**  
+Old: Used ``calculateShortestPath`` with incorrect obstruction checks, often misclassifying pairs as directly connected.  
+New: Introduced ``calculateDistance_dynamic``, which computes the true “dynamic path” around the inner sphere using tangents and spherical arcs.  
+2.**KD-Tree Neighbor Search**  
+Old: Considered only the first Euclidean nearest neighbor, missing valid dynamic shortest pairs.  
+New: Supports evaluating multiple nearest neighbors, ensuring correct global pair selection.
 
 
